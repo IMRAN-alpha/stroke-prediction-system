@@ -22,7 +22,7 @@ def load_data():
 
 st.markdown('''<div class="hero"><h1>🧠 Stroke Prediction — Data Exploration Dashboard</h1>
 <p>Python for Data Science Internship · Exploratory Data Analysis & Data Visualization · MD IMRAN</p></div>''', unsafe_allow_html=True)
-<a href="https://www.linkedin.com/in/imran-alpha" target="_blank">LinkedIn</a>
+st.markdown('[LinkedIn](https://www.linkedin.com/in/imran-alpha)')
 
 if not DATA_FILE.exists():
     st.error('Dataset file not found. Keep healthcare-dataset-stroke-data.csv beside app.py.')
