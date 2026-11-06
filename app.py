@@ -22,7 +22,6 @@ def load_data():
 
 st.markdown('''<div class="hero"><h1>🧠 Stroke Prediction — Data Exploration Dashboard</h1>
 <p>Python for Data Science Internship · Exploratory Data Analysis & Data Visualization · MD IMRAN</p></div>''', unsafe_allow_html=True)
-st.markdown('[LinkedIn](https://www.linkedin.com/in/imran-alpha)')
 
 if not DATA_FILE.exists():
     st.error('Dataset file not found. Keep healthcare-dataset-stroke-data.csv beside app.py.')
@@ -38,6 +37,7 @@ with st.sidebar:
     stroke_filter = st.multiselect('Target class', ['No Stroke','Stroke'], default=['No Stroke','Stroke'])
     st.divider()
     st.markdown('**Developer**  \nMD IMRAN')
+    st.markdown('[LinkedIn](https://www.linkedin.com/in/imran-alpha)')
     st.caption('Educational data-analysis demonstration. Not a diagnostic tool.')
 
 filtered = df[df['gender'].isin(gender_filter) & df['Residence_type'].isin(residence_filter) & df['stroke_label'].isin(stroke_filter)]
