@@ -1,6 +1,13 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
