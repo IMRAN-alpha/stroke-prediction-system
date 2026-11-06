@@ -56,6 +56,122 @@ with tab1:
     st.dataframe(filtered.drop(columns=['stroke_label']).head(20), use_container_width=True)
     st.subheader('Numerical summary')
     st.dataframe(filtered[['age','avg_glucose_level','bmi']].describe().round(2), use_container_width=True)
+    
+# ==============================
+# AI STROKE PREDICTION FEATURE
+# ==============================
+
+st.divider()
+st.header("🧠 AI Stroke Risk Prediction")
+st.write("Enter patient information for an educational ML prediction.")
+
+@st.cache_resource
+def get_stroke_model():
+    X = df[NUMERIC + CATEGORICAL]
+    y = df["stroke"]
+
+    numeric_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="median"))
+    ])
+
+    categorical_pipeline = Pipeline([
+        ("imputer", SimpleImputer(strategy="most_frequent")),
+        ("encoder", OneHotEncoder(handle_unknown="ignore"))
+    ])
+
+    preprocessor = ColumnTransformer([
+        ("num", numeric_pipeline, NUMERIC),
+        ("cat", categorical_pipeline, CATEGORICAL)
+    ])
+
+    model = Pipeline([
+        ("preprocessor", preprocessor),
+        ("classifier", LogisticRegression(
+            class_weight="balanced",
+            solver="liblinear",
+            max_iter=1000,
+            random_state=42
+        ))
+    ])
+
+    model.fit(X, y)
+    return model
+
+
+NUMERIC = [
+    "age", "hypertension", "heart_disease",
+    "avg_glucose_level", "bmi"
+]
+
+CATEGORICAL = [
+    "gender", "ever_married", "work_type",
+    "Residence_type", "smoking_status"
+]
+
+model = get_stroke_model()
+
+with st.form("stroke_prediction_form"):
+    col1, col2 = st.columns(2)
+
+    with col1:
+        age = st.number_input("Age", 1, 100, 30)
+        gender = st.selectbox("Gender", ["Male", "Female"])
+        hypertension = st.selectbox("Hypertension", [0, 1])
+        heart_disease = st.selectbox("Heart Disease", [0, 1])
+        married = st.selectbox("Ever Married", ["Yes", "No"])
+
+    with col2:
+        glucose = st.number_input("Average Glucose Level", 1.0, 300.0, 100.0)
+        bmi = st.number_input("BMI", 10.0, 70.0, 25.0)
+        work = st.selectbox("Work Type", [
+            "Private", "Self-employed", "Govt_job",
+            "children", "Never_worked"
+        ])
+        residence = st.selectbox("Residence", ["Urban", "Rural"])
+        smoking = st.selectbox("Smoking Status", [
+            "formerly smoked", "never smoked",
+            "smokes", "Unknown"
+        ])
+
+    submitted = st.form_submit_button(
+        "Predict Stroke Risk",
+        use_container_width=True
+    )
+
+if submitted:
+    patient = pd.DataFrame([{
+        "age": age,
+        "hypertension": hypertension,
+        "heart_disease": heart_disease,
+        "avg_glucose_level": glucose,
+        "bmi": bmi,
+        "gender": gender,
+        "ever_married": married,
+        "work_type": work,
+        "Residence_type": residence,
+        "smoking_status": smoking
+    }])
+
+    probability = model.predict_proba(patient)[0][
+        list(model.classes_).index(1)
+    ]
+
+    prediction = model.predict(patient)[0]
+
+    st.subheader("Prediction Result")
+
+    st.metric("Model Estimated Probability", f"{probability * 100:.2f}%")
+
+    if prediction == 1:
+        st.warning("Model classified this input in the positive class.")
+    else:
+        st.success("Model classified this input in the negative class.")
+
+    st.caption(
+        "Educational machine-learning output only. "
+        "This is not a medical diagnosis or validated clinical risk assessment."
+)
+        
     a,b=st.columns(2)
     with a:
         fig,ax=plt.subplots(); ax.hist(filtered['age'].dropna(),bins=25); ax.set_title('Age Distribution'); ax.set_xlabel('Age'); ax.set_ylabel('Number of Records'); st.pyplot(fig); plt.close(fig)
