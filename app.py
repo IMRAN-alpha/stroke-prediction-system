@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,47 +10,332 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.linear_model import LogisticRegression
 
+
+# ==========================================
+# APP CONFIGURATION
+# ==========================================
+
+st.set_page_config(
+    page_title="Stroke Prediction | AI Healthcare",
+    page_icon="🧠",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 BASE = Path(__file__).resolve().parent
 DATA_FILE = BASE / "healthcare-dataset-stroke-data.csv"
 
-st.set_page_config(
-    page_title="Stroke Prediction | EDA Dashboard",
-    page_icon="🧠",
-    layout="wide"
-)
+
+# ==========================================
+# FUTURISTIC UI DESIGN
+# ==========================================
 
 st.markdown("""
 <style>
+
+/* MAIN BACKGROUND */
+
 .stApp {
-    background: #f4f7fb;
+    background:
+        radial-gradient(circle at 10% 10%, #102c46 0%, transparent 35%),
+        radial-gradient(circle at 90% 80%, #073b46 0%, transparent 35%),
+        #071321;
+    color: #e8f4ff;
 }
+
 .block-container {
-    padding-top: 1.5rem;
+    padding-top: 1.8rem;
+    padding-bottom: 3rem;
+    max-width: 1450px;
 }
+
+/* GLOBAL TEXT */
+
+html, body, [class*="css"] {
+    color: #e8f4ff;
+}
+
+h1, h2, h3, h4 {
+    color: #eaf7ff !important;
+}
+
+p, label, span {
+    color: #c1d5e8;
+}
+
+/* HERO SECTION */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+    padding: 35px 30px;
+    border: 1px solid rgba(0, 220, 255, 0.35);
+    border-radius: 22px;
+    background: linear-gradient(
+        120deg,
+        rgba(12, 39, 64, 0.96),
+        rgba(5, 74, 88, 0.85)
+    );
+    box-shadow: 0 0 30px rgba(0, 200, 255, 0.12);
+    margin-bottom: 25px;
+    animation: fadeUp 0.8s ease-out;
+}
+
+.hero h1 {
+    font-size: clamp(25px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #ffffff !important;
+    margin-bottom: 8px;
+}
+
+.hero p {
+    color: #a9e9f5 !important;
+    font-size: 15px;
+}
+
+.hero-tag {
+    display: inline-block;
+    color: #52eaff;
+    background: rgba(0, 220, 255, 0.10);
+    border: 1px solid rgba(0, 220, 255, 0.35);
+    border-radius: 30px;
+    padding: 6px 14px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+/* METRIC CARDS */
+
 [data-testid="stMetric"] {
-    background: white;
-    padding: 16px;
-    border: 1px solid #e3eaf2;
+    background: linear-gradient(
+        145deg,
+        rgba(17, 43, 67, 0.96),
+        rgba(9, 29, 48, 0.96)
+    );
+    border: 1px solid rgba(0, 220, 255, 0.23);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 5px 22px rgba(0, 0, 0, 0.20);
+    transition: all 0.3s ease;
+}
+
+[data-testid="stMetric"]:hover {
+    transform: translateY(-5px);
+    border-color: #00d9ff;
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.18);
+}
+
+[data-testid="stMetricLabel"] {
+    color: #8eb8d2 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: #55eaff !important;
+    font-weight: 800;
+}
+
+/* BUTTONS */
+
+.stButton > button,
+.stFormSubmitButton > button {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid #00d9ff;
+    background: linear-gradient(110deg, #087d9b, #07516e);
+    color: white !important;
+    font-weight: 700;
+    padding: 12px 18px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(0, 217, 255, 0.12);
+}
+
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background: linear-gradient(110deg, #00a9c9, #087d9b);
+    border-color: #8af3ff;
+    box-shadow: 0 0 22px rgba(0, 217, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.stButton > button:active,
+.stFormSubmitButton > button:active {
+    transform: scale(0.98);
+}
+
+/* TABS */
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+    background: rgba(9, 29, 48, 0.75);
+    border: 1px solid rgba(0, 217, 255, 0.16);
+    border-radius: 14px;
+    padding: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    background: transparent;
+    border-radius: 9px;
+    color: #a8c5d8;
+    padding: 10px 15px;
+    transition: all 0.25s ease;
+}
+
+.stTabs [aria-selected="true"] {
+    background: #075c78 !important;
+    color: white !important;
+    border-bottom: 2px solid #00e5ff !important;
+}
+
+/* INPUT FIELDS */
+
+.stTextInput input,
+.stNumberInput input,
+.stSelectbox div[data-baseweb="select"],
+.stMultiSelect div[data-baseweb="select"] {
+    background-color: #10283d !important;
+    color: white !important;
+    border-color: rgba(0, 217, 255, 0.25) !important;
+    border-radius: 10px !important;
+}
+
+[data-baseweb="popover"] {
+    background: #10283d !important;
+}
+
+/* FORM CONTAINER */
+
+[data-testid="stForm"] {
+    background: rgba(12, 35, 55, 0.85);
+    border: 1px solid rgba(0, 217, 255, 0.24);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.16);
+}
+
+/* DATAFRAMES */
+
+[data-testid="stDataFrame"] {
+    border: 1px solid rgba(0, 217, 255, 0.20);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* SIDEBAR */
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0b2034, #071321);
+    border-right: 1px solid rgba(0, 217, 255, 0.20);
+}
+
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: #55eaff !important;
+}
+
+/* ALERTS */
+
+[data-testid="stAlert"] {
     border-radius: 12px;
 }
-.hero {
-    padding: 24px;
-    border-radius: 16px;
-    background: linear-gradient(120deg,#12304a,#176b75);
-    color: white;
-    margin-bottom: 18px;
+
+/* CUSTOM SECTION */
+
+.section-heading {
+    color: #5cecff;
+    font-size: 21px;
+    font-weight: 800;
+    margin-top: 15px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
 }
-.hero h1 {
-    color: white;
-    margin: 0;
+
+.prediction-panel {
+    background: linear-gradient(
+        135deg,
+        rgba(10, 51, 72, 0.95),
+        rgba(12, 31, 53, 0.95)
+    );
+    border: 1px solid rgba(0, 217, 255, 0.32);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 0 25px rgba(0, 217, 255, 0.08);
+    animation: fadeUp 0.6s ease-out;
 }
-.hero p {
-    color: #d8e8ee;
-    margin: 8px 0 0;
+
+.footer {
+    text-align: center;
+    padding: 22px;
+    border-top: 1px solid rgba(0, 217, 255, 0.20);
+    color: #83a9c1;
+    font-size: 13px;
 }
+
+/* ANIMATIONS */
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(0, 217, 255, 0.10);
+    }
+    50% {
+        box-shadow: 0 0 22px rgba(0, 217, 255, 0.23);
+    }
+}
+
+.hero-tag {
+    animation: glow 3s infinite ease-in-out;
+}
+
+/* REDUCED MOTION ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 768px) {
+    .block-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .hero {
+        padding: 24px 18px;
+    }
+
+    .hero h1 {
+        font-size: 25px;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        padding: 8px;
+        font-size: 12px;
+    }
+}
+
 </style>
 """, unsafe_allow_html=True)
 
+
+# ==========================================
+# DATA LOADING
+# ==========================================
 
 @st.cache_data
 def load_data():
@@ -61,14 +347,6 @@ def load_data():
     return df
 
 
-st.markdown("""
-<div class="hero">
-<h1>🧠 Stroke Prediction — Data Exploration Dashboard</h1>
-<p>Python for Data Science Internship · Exploratory Data Analysis & Data Visualization · MD IMRAN</p>
-</div>
-""", unsafe_allow_html=True)
-
-
 if not DATA_FILE.exists():
     st.error(
         "Dataset file not found. Keep "
@@ -76,17 +354,35 @@ if not DATA_FILE.exists():
     )
     st.stop()
 
-
 df = load_data()
 
 
-# ==============================
-# SIDEBAR FILTERS
-# ==============================
+# ==========================================
+# HERO HEADER
+# ==========================================
+
+st.markdown("""
+<div class="hero">
+    <div class="hero-tag">ARTIFICIAL INTELLIGENCE • HEALTHCARE</div>
+    <h1>🧠 STROKE PREDICTION SYSTEM</h1>
+    <p>
+        Intelligent Data Exploration & Machine Learning Dashboard
+    </p>
+    <p>
+        Python for Data Science Internship · Data Visualization · MD IMRAN
+    </p>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ==========================================
+# SIDEBAR
+# ==========================================
 
 with st.sidebar:
-    st.header("Dashboard Controls")
-    st.caption("Explore the supplied healthcare dataset.")
+
+    st.markdown("## ⚡ AI CONTROL CENTER")
+    st.caption("Dashboard configuration")
 
     gender_filter = st.multiselect(
         "Gender",
@@ -101,21 +397,29 @@ with st.sidebar:
     )
 
     stroke_filter = st.multiselect(
-        "Target class",
+        "Target Class",
         ["No Stroke", "Stroke"],
         default=["No Stroke", "Stroke"]
     )
 
     st.divider()
-    st.markdown("**Developer**  \nMD IMRAN")
+
+    st.markdown("### 👨‍💻 DEVELOPER")
+    st.write("MD IMRAN")
+
     st.markdown(
-        "[LinkedIn](https://www.linkedin.com/in/imran-alpha)"
-    )
-    st.caption(
-        "Educational data-analysis demonstration. "
-        "Not a diagnostic tool."
+        "[🔗 Connect on LinkedIn](https://www.linkedin.com/in/imran-alpha)"
     )
 
+    st.caption(
+        "Educational demonstration only. "
+        "Not a medical diagnostic system."
+    )
+
+
+# ==========================================
+# FILTER DATA
+# ==========================================
 
 filtered = df[
     df["gender"].isin(gender_filter)
@@ -124,83 +428,124 @@ filtered = df[
 ]
 
 
-# ==============================
-# DASHBOARD METRICS
-# ==============================
+# ==========================================
+# TOP METRICS
+# ==========================================
+
+st.markdown(
+    '<div class="section-heading">◈ SYSTEM OVERVIEW</div>',
+    unsafe_allow_html=True
+)
 
 c1, c2, c3, c4 = st.columns(4)
 
-c1.metric("Total Records", f"{len(df):,}")
-c2.metric("Features", "12")
-c3.metric("Stroke Records", f"{int(df.stroke.sum()):,}")
-c4.metric("Missing BMI Values", f"{int(df.bmi.isna().sum()):,}")
+c1.metric("TOTAL RECORDS", f"{len(df):,}")
+c2.metric("TOTAL FEATURES", "12")
+c3.metric("STROKE RECORDS", f"{int(df.stroke.sum()):,}")
+c4.metric("MISSING BMI", f"{int(df.bmi.isna().sum()):,}")
 
 st.info(
-    "The filters below affect the visual analysis. "
-    "Dataset overview metrics above describe the complete original dataset."
+    "Dashboard filters affect visual analysis. "
+    "Overview metrics describe the complete original dataset."
 )
 
 
-# ==============================
+# ==========================================
 # EDA TABS
-# ==============================
+# ==========================================
 
 tab1, tab2, tab3, tab4 = st.tabs([
-    "Dataset Overview",
-    "Target Analysis",
-    "Health & Lifestyle",
-    "Model Results"
+    "📊 Dataset Overview",
+    "🎯 Target Analysis",
+    "❤️ Health & Lifestyle",
+    "🤖 Model Results"
 ])
 
 
+# ==========================================
 # TAB 1: DATASET OVERVIEW
+# ==========================================
 
 with tab1:
-    st.subheader("Dataset preview")
+
+    st.markdown(
+        '<div class="section-heading">DATASET EXPLORATION</div>',
+        unsafe_allow_html=True
+    )
+
+    st.subheader("Dataset Preview")
 
     st.dataframe(
         filtered.drop(columns=["stroke_label"]).head(20),
         use_container_width=True
     )
 
-    st.subheader("Numerical summary")
+    st.subheader("Numerical Summary")
 
     st.dataframe(
-        filtered[[
-            "age",
-            "avg_glucose_level",
-            "bmi"
-        ]].describe().round(2),
+        filtered[
+            ["age", "avg_glucose_level", "bmi"]
+        ].describe().round(2),
         use_container_width=True
     )
 
     a, b = st.columns(2)
 
     with a:
+
         fig, ax = plt.subplots()
-        ax.hist(filtered["age"].dropna(), bins=25)
-        ax.set_title("Age Distribution")
-        ax.set_xlabel("Age")
-        ax.set_ylabel("Number of Records")
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
+        ax.hist(
+            filtered["age"].dropna(),
+            bins=25,
+            edgecolor="#071321"
+        )
+
+        ax.set_title("Age Distribution", color="white")
+        ax.set_xlabel("Age", color="white")
+        ax.set_ylabel("Number of Records", color="white")
+        ax.tick_params(colors="white")
+
+        for spine in ax.spines.values():
+            spine.set_color("#42627c")
+
         st.pyplot(fig)
         plt.close(fig)
 
     with b:
+
         counts = filtered["Residence_type"].value_counts()
 
         fig, ax = plt.subplots()
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
         counts.plot(kind="bar", ax=ax)
-        ax.set_title("Residence Type Distribution")
-        ax.set_xlabel("Residence")
-        ax.set_ylabel("Records")
+
+        ax.set_title("Residence Type Distribution", color="white")
+        ax.set_xlabel("Residence", color="white")
+        ax.set_ylabel("Records", color="white")
+        ax.tick_params(colors="white")
+
+        for spine in ax.spines.values():
+            spine.set_color("#42627c")
+
         st.pyplot(fig)
         plt.close(fig)
 
 
+# ==========================================
 # TAB 2: TARGET ANALYSIS
+# ==========================================
 
 with tab2:
-    st.subheader("Stroke vs non-stroke class distribution")
+
+    st.markdown(
+        '<div class="section-heading">TARGET CLASS ANALYSIS</div>',
+        unsafe_allow_html=True
+    )
 
     counts = (
         filtered["stroke_label"]
@@ -212,62 +557,94 @@ with tab2:
     a, b = st.columns(2)
 
     with a:
+
         fig, ax = plt.subplots()
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
         counts.plot(kind="bar", ax=ax)
-        ax.set_title("Target Class Count")
-        ax.set_xlabel("Target")
-        ax.set_ylabel("Records")
+
+        ax.set_title("Target Class Count", color="white")
+        ax.set_xlabel("Target", color="white")
+        ax.set_ylabel("Records", color="white")
+        ax.tick_params(colors="white")
+
         st.pyplot(fig)
         plt.close(fig)
 
     with b:
+
         fig, ax = plt.subplots()
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
         counts.plot(
             kind="pie",
             autopct="%1.1f%%",
             ax=ax
         )
+
         ax.set_ylabel("")
-        ax.set_title("Target Class Share")
+        ax.set_title("Target Class Share", color="white")
+
         st.pyplot(fig)
         plt.close(fig)
 
-    st.caption(
+    st.info(
         f"In the full dataset, stroke-positive records are "
         f"{df.stroke.mean() * 100:.2f}% of all records. "
         "The target is imbalanced."
     )
 
 
+# ==========================================
 # TAB 3: HEALTH & LIFESTYLE
+# ==========================================
 
 with tab3:
-    st.subheader("Health and lifestyle patterns")
+
+    st.markdown(
+        '<div class="section-heading">HEALTH & LIFESTYLE ANALYSIS</div>',
+        unsafe_allow_html=True
+    )
 
     a, b = st.columns(2)
 
     with a:
+
         c = filtered["smoking_status"].value_counts()
 
         fig, ax = plt.subplots()
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
         c.plot(kind="bar", ax=ax)
-        ax.set_title("Smoking Status Distribution")
-        ax.set_xlabel("Smoking Status")
-        ax.set_ylabel("Records")
-        plt.xticks(rotation=25, ha="right")
+
+        ax.set_title("Smoking Status Distribution", color="white")
+        ax.set_xlabel("Smoking Status", color="white")
+        ax.set_ylabel("Records", color="white")
+        ax.tick_params(colors="white", rotation=25)
+
         st.pyplot(fig)
         plt.close(fig)
 
     with b:
+
         c = filtered.groupby(
             "stroke_label"
         )["avg_glucose_level"].mean()
 
         fig, ax = plt.subplots()
+        fig.patch.set_facecolor("#10283d")
+        ax.set_facecolor("#10283d")
+
         c.plot(kind="bar", ax=ax)
-        ax.set_title("Average Glucose by Target Class")
-        ax.set_xlabel("Target")
-        ax.set_ylabel("Average Glucose Level")
+
+        ax.set_title("Average Glucose by Target Class", color="white")
+        ax.set_xlabel("Target", color="white")
+        ax.set_ylabel("Average Glucose Level", color="white")
+        ax.tick_params(colors="white")
+
         st.pyplot(fig)
         plt.close(fig)
 
@@ -280,16 +657,20 @@ with tab3:
     )
 
 
+# ==========================================
 # TAB 4: MODEL RESULTS
+# ==========================================
 
 with tab4:
-    st.subheader(
-        "Model comparison — values reported in the internship presentation"
+
+    st.markdown(
+        '<div class="section-heading">MODEL PERFORMANCE</div>',
+        unsafe_allow_html=True
     )
 
     st.caption(
-        "These are presentation-reported results, displayed for explanation. "
-        "They are not evaluation results of the live demo model below."
+        "Values reported in the internship presentation. "
+        "These are separate from the live demo model."
     )
 
     m1, m2, m3 = st.columns(3)
@@ -301,23 +682,26 @@ with tab4:
     st.warning(
         "Accuracy alone can be misleading with an imbalanced target. "
         "Interpret recall and Average Precision alongside accuracy. "
-        "This is an educational prototype, not a medical diagnosis "
-        "or clinical decision tool."
+        "These reported results are not a clinical validation."
     )
 
 
-# ==============================
-# AI STROKE PREDICTION FEATURE
-# ==============================
+# ==========================================
+# AI STROKE PREDICTION
+# ==========================================
 
 st.divider()
 
-st.header("🧠 AI Stroke Prediction")
-
-st.write(
-    "Enter patient information to see the output of the "
-    "educational machine-learning demo model."
-)
+st.markdown("""
+<div class="prediction-panel">
+    <div class="hero-tag">AI PREDICTION MODULE</div>
+    <h2>🧠 Stroke Prediction</h2>
+    <p>
+        Enter the requested information to see the output
+        of the educational machine-learning demo model.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
 
 NUMERIC = [
@@ -375,15 +759,18 @@ def get_stroke_model():
 model = get_stroke_model()
 
 
-# ==============================
+# ==========================================
 # PREDICTION FORM
-# ==============================
+# ==========================================
 
 with st.form("stroke_prediction_form"):
+
+    st.markdown("### ⚙️ PATIENT INFORMATION")
 
     col1, col2 = st.columns(2)
 
     with col1:
+
         age = st.number_input(
             "Age",
             min_value=1,
@@ -412,6 +799,7 @@ with st.form("stroke_prediction_form"):
         )
 
     with col2:
+
         glucose = st.number_input(
             "Average Glucose Level",
             min_value=1.0,
@@ -453,14 +841,14 @@ with st.form("stroke_prediction_form"):
         )
 
     submitted = st.form_submit_button(
-        "Predict Stroke Class",
+        "⚡ RUN AI PREDICTION",
         use_container_width=True
     )
 
 
-# ==============================
-# PREDICTION RESULT
-# ==============================
+# ==========================================
+# PREDICTION OUTPUT
+# ==========================================
 
 if submitted:
 
@@ -483,7 +871,7 @@ if submitted:
 
     prediction = model.predict(patient)[0]
 
-    st.subheader("Prediction Result")
+    st.markdown("### ◈ PREDICTION OUTPUT")
 
     st.metric(
         "Model Estimated Probability",
@@ -491,31 +879,36 @@ if submitted:
     )
 
     if prediction == 1:
+
         st.warning(
             "The demo model classified this input in the positive class."
         )
+
     else:
+
         st.success(
             "The demo model classified this input in the negative class."
         )
 
     st.caption(
-        "This probability is an educational machine-learning model output. "
-        "It is not a validated clinical risk estimate or medical diagnosis. "
+        "Educational machine-learning output only. "
+        "This is not a validated clinical risk assessment or medical diagnosis. "
         "Do not use it to make healthcare decisions."
     )
 
 
-# ==============================
+# ==========================================
 # FOOTER
-# ==============================
+# ==========================================
 
 st.divider()
 
-st.caption(
-    "Libraries used: Pandas · NumPy · Matplotlib · Seaborn · Scikit-learn"
-)
-
-st.caption(
-    "Dataset: healthcare-dataset-stroke-data.csv · 5,110 rows · 12 columns"
-)
+st.markdown("""
+<div class="footer">
+    <strong>🧠 STROKE PREDICTION SYSTEM</strong><br><br>
+    Python · Pandas · Matplotlib · Scikit-learn · Streamlit<br>
+    Data Exploration • Visualization • Machine Learning<br><br>
+    Developed by MD IMRAN
+</div>
+""", unsafe_allow_html=True)
+    
