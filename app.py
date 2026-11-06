@@ -871,30 +871,97 @@ if submitted:
 
     prediction = model.predict(patient)[0]
 
+    probability_percent = probability * 100
+
+    # Risk indicator categories (demo thresholds only)
+    if probability_percent < 30:
+        risk_label = "LOWER PREDICTED PROBABILITY"
+        risk_color = "#22c55e"
+        risk_bg = "rgba(34, 197, 94, 0.12)"
+
+    elif probability_percent < 60:
+        risk_label = "MODERATE PREDICTED PROBABILITY"
+        risk_color = "#eab308"
+        risk_bg = "rgba(234, 179, 8, 0.12)"
+
+    else:
+        risk_label = "HIGHER PREDICTED PROBABILITY"
+        risk_color = "#ef4444"
+        risk_bg = "rgba(239, 68, 68, 0.12)"
+
     st.markdown("### ◈ PREDICTION OUTPUT")
 
+    # Probability metric
     st.metric(
         "Model Estimated Probability",
-        f"{probability * 100:.2f}%"
+        f"{probability_percent:.2f}%"
     )
 
-    if prediction == 1:
+    # Visual risk indicator
+    st.markdown(f"""
+    <div style="
+        background:{risk_bg};
+        border:1px solid {risk_color};
+        border-radius:16px;
+        padding:22px;
+        margin:15px 0;
+        animation:fadeUp 0.6s ease-out;
+    ">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div style="
+                width:14px;
+                height:14px;
+                border-radius:50%;
+                background:{risk_color};
+                box-shadow:0 0 12px {risk_color};
+            "></div>
 
+            <span style="
+                color:{risk_color};
+                font-size:16px;
+                font-weight:800;
+            ">
+                {risk_label}
+            </span>
+        </div>
+
+        <h2 style="
+            color:{risk_color};
+            margin:15px 0 5px 0;
+        ">
+            {probability_percent:.2f}%
+        </h2>
+
+        <div style="
+            background:rgba(255,255,255,0.10);
+            height:10px;
+            border-radius:20px;
+            overflow:hidden;
+        ">
+            <div style="
+                width:{probability_percent:.2f}%;
+                height:100%;
+                background:{risk_color};
+                border-radius:20px;
+            "></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if prediction == 1:
         st.warning(
             "The demo model classified this input in the positive class."
         )
-
     else:
-
         st.success(
             "The demo model classified this input in the negative class."
         )
 
     st.caption(
-        "Educational machine-learning output only. "
-        "This is not a validated clinical risk assessment or medical diagnosis. "
-        "Do not use it to make healthcare decisions."
-    )
+        "The colour categories are illustrative probability bands, "
+        "not clinically validated risk levels. This educational model "
+        "is not a medical diagnosis or a basis for healthcare decisions."
+        )
 
 
 # ==========================================
@@ -906,9 +973,26 @@ st.divider()
 st.markdown("""
 <div class="footer">
     <strong>🧠 STROKE PREDICTION SYSTEM</strong><br><br>
+
     Python · Pandas · Matplotlib · Scikit-learn · Streamlit<br>
     Data Exploration • Visualization • Machine Learning<br><br>
-    Developed by MD IMRAN
+
+    Developed by <strong>MD IMRAN</strong><br><br>
+
+    <a href="https://www.linkedin.com/in/imran-alpha"
+       target="_blank"
+       style="
+           display:inline-block;
+           color:#55eaff;
+           text-decoration:none;
+           border:1px solid #00d9ff;
+           padding:9px 18px;
+           border-radius:10px;
+           font-weight:700;
+           transition:0.3s;
+       ">
+       🔗 Connect with me on LinkedIn
+    </a>
 </div>
 """, unsafe_allow_html=True)
-    
+
