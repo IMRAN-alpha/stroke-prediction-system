@@ -967,32 +967,33 @@ if submitted:
 # ==========================================
 # FOOTER
 # ==========================================
-
 st.divider()
 
-st.markdown("""
-<div class="footer">
-    <strong>🧠 STROKE PREDICTION SYSTEM</strong><br><br>
+st.markdown(
+    """
+    <div class="footer">
+        <strong>🧠 STROKE PREDICTION SYSTEM</strong><br><br>
 
-    Python · Pandas · Matplotlib · Scikit-learn · Streamlit<br>
-    Data Exploration • Visualization • Machine Learning<br><br>
+        Python · Pandas · Matplotlib · Scikit-learn · Streamlit<br>
+        Data Exploration • Visualization • Machine Learning<br><br>
 
-    Developed by <strong>MD IMRAN</strong><br><br>
+        Developed by <strong>MD IMRAN</strong><br><br>
 
-    <a href="https://www.linkedin.com/in/imran-alpha"
-       target="_blank"
-       style="
-           display:inline-block;
-           color:#55eaff;
-           text-decoration:none;
-           border:1px solid #00d9ff;
-           padding:9px 18px;
-           border-radius:10px;
-           font-weight:700;
-           transition:0.3s;
-       ">
-       🔗 Connect with me on LinkedIn
-    </a>
-</div>
-""", unsafe_allow_html=True)
-
+        <a href="https://www.linkedin.com/in/imran-alpha"
+           target="_blank"
+           rel="noopener noreferrer"
+           style="
+               display:inline-block;
+               color:#55eaff;
+               text-decoration:none;
+               border:1px solid #00d9ff;
+               padding:9px 18px;
+               border-radius:10px;
+               font-weight:700;
+           ">
+           🔗 Connect with me on LinkedIn
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
