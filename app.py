@@ -898,39 +898,43 @@ if submitted:
     )
 
     
-    # Native Streamlit Risk Indicator
+    # CENTERED PREDICTION OUTPUT
+    st.markdown("### ◈ PREDICTION OUTPUT") 
 
-    st.markdown("### ◈ MODEL PROBABILITY INDICATOR")
-
-    if probability_percent < 30:
-        risk_label = "LOWER PREDICTED PROBABILITY"
-        risk_color = "🟢"
-
-    elif probability_percent < 60:
-        risk_label = "MODERATE PREDICTED PROBABILITY"
-        risk_color = "🟡"
-
-    else:
-        risk_label = "HIGHER PREDICTED PROBABILITY"
-        risk_color = "🔴"
-
-    st.subheader(
-        f"{risk_color} {risk_label}"
+    left_space, center_output, right_space = st.columns(
+        [1, 2, 1]
     )
 
-    st.metric(
-        "Probability Score",
-        f"{probability_percent:.2f}%"
-    )
+    with center_output:
 
-    st.progress(
-        min(max(probability, 0.0), 1.0)
-    )
+        st.markdown(
+            "<h2 style='text-align:center;'>"
+            "◈ PREDICTION OUTPUT"
+            "</h2>",
+            unsafe_allow_html=True
+        )
 
-    st.caption(
-        "The indicator represents illustrative model-probability "
-        "bands, not clinically validated medical risk categories."
-    )
+        st.metric(
+            "Model Estimated Probability",
+            f"{probability_percent:.2f}%"
+        )
+
+        st.markdown(
+            "<h3 style='text-align:center;'>"
+            f"{risk_color} {risk_label}"
+            "</h3>",
+            unsafe_allow_html=True
+        )
+
+        st.progress(
+            min(max(probability, 0.0), 1.0)
+        )
+
+        st.caption(
+            "Illustrative model-probability category only. "
+            "Not a clinically validated medical risk assessment."
+        )
+        
     
 
     if prediction == 1:
