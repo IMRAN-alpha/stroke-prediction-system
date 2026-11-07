@@ -873,84 +873,59 @@ if submitted:
 
     probability_percent = probability * 100
 
-    # Risk indicator categories (demo thresholds only)
+    # Risk Indicator (Illustrative thresholds)
+
     if probability_percent < 30:
         risk_label = "LOWER PREDICTED PROBABILITY"
         risk_color = "#22c55e"
-        risk_bg = "rgba(34, 197, 94, 0.12)"
+        risk_icon = "🟢"
 
     elif probability_percent < 60:
         risk_label = "MODERATE PREDICTED PROBABILITY"
         risk_color = "#eab308"
-        risk_bg = "rgba(234, 179, 8, 0.12)"
+        risk_icon = "🟡"
 
     else:
         risk_label = "HIGHER PREDICTED PROBABILITY"
         risk_color = "#ef4444"
-        risk_bg = "rgba(239, 68, 68, 0.12)"
+        risk_icon = "🔴"
 
     st.markdown("### ◈ PREDICTION OUTPUT")
 
-    # Probability metric
+    # Probability
     st.metric(
         "Model Estimated Probability",
         f"{probability_percent:.2f}%"
     )
 
-    
-    # CENTERED PREDICTION OUTPUT
-    st.markdown("### ◈ PREDICTION OUTPUT") 
-
-    left_space, center_output, right_space = st.columns(
-        [1, 2, 1]
+    # Risk Indicator
+    st.markdown(
+        f"### {risk_icon} {risk_label}"
     )
 
-    with center_output:
+    # Probability Progress Bar
+    st.progress(
+        min(max(probability, 0.0), 1.0)
+    )
 
-        st.markdown(
-            "<h2 style='text-align:center;'>"
-            "◈ PREDICTION OUTPUT"
-            "</h2>",
-            unsafe_allow_html=True
-        )
-
-        st.metric(
-            "Model Estimated Probability",
-            f"{probability_percent:.2f}%"
-        )
-
-        st.markdown(
-            "<h3 style='text-align:center;'>"
-            f"{risk_color} {risk_label}"
-            "</h3>",
-            unsafe_allow_html=True
-        )
-
-        st.progress(
-            min(max(probability, 0.0), 1.0)
-        )
-
-        st.caption(
-            "Illustrative model-probability category only. "
-            "Not a clinically validated medical risk assessment."
-        )
-        
-    
-
+    # Model Classification
     if prediction == 1:
         st.warning(
-            "The demo model classified this input in the positive class."
+            "The demo model classified this input "
+            "in the positive class."
         )
     else:
         st.success(
-            "The demo model classified this input in the negative class."
+            "The demo model classified this input "
+            "in the negative class."
         )
 
     st.caption(
-        "The colour categories are illustrative probability bands, "
-        "not clinically validated risk levels. This educational model "
-        "is not a medical diagnosis or a basis for healthcare decisions."
-        )
+        "The colour categories are illustrative probability "
+        "bands, not clinically validated risk levels. "
+        "This educational model is not a medical diagnosis."
+    )
+
 
 # ==========================================
 # FOOTER
