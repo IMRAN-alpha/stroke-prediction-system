@@ -897,56 +897,41 @@ if submitted:
         f"{probability_percent:.2f}%"
     )
 
-    # Visual risk indicator
-    st.markdown(f"""
-    <div style="
-        background:{risk_bg};
-        border:1px solid {risk_color};
-        border-radius:16px;
-        padding:22px;
-        margin:15px 0;
-        animation:fadeUp 0.6s ease-out;
-    ">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div style="
-                width:14px;
-                height:14px;
-                border-radius:50%;
-                background:{risk_color};
-                box-shadow:0 0 12px {risk_color};
-            "></div>
+    
+    # Native Streamlit Risk Indicator
 
-            <span style="
-                color:{risk_color};
-                font-size:16px;
-                font-weight:800;
-            ">
-                {risk_label}
-            </span>
-        </div>
+    st.markdown("### ◈ MODEL PROBABILITY INDICATOR")
 
-        <h2 style="
-            color:{risk_color};
-            margin:15px 0 5px 0;
-        ">
-            {probability_percent:.2f}%
-        </h2>
+    if probability_percent < 30:
+        risk_label = "LOWER PREDICTED PROBABILITY"
+        risk_color = "🟢"
 
-        <div style="
-            background:rgba(255,255,255,0.10);
-            height:10px;
-            border-radius:20px;
-            overflow:hidden;
-        ">
-            <div style="
-                width:{probability_percent:.2f}%;
-                height:100%;
-                background:{risk_color};
-                border-radius:20px;
-            "></div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    elif probability_percent < 60:
+        risk_label = "MODERATE PREDICTED PROBABILITY"
+        risk_color = "🟡"
+
+    else:
+        risk_label = "HIGHER PREDICTED PROBABILITY"
+        risk_color = "🔴"
+
+    st.subheader(
+        f"{risk_color} {risk_label}"
+    )
+
+    st.metric(
+        "Probability Score",
+        f"{probability_percent:.2f}%"
+    )
+
+    st.progress(
+        min(max(probability, 0.0), 1.0)
+    )
+
+    st.caption(
+        "The indicator represents illustrative model-probability "
+        "bands, not clinically validated medical risk categories."
+    )
+    
 
     if prediction == 1:
         st.warning(
