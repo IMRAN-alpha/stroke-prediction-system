@@ -461,6 +461,120 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🤖 Model Results"
 ])
 
+# ═══════════════════════════
+# TAB 2 — ABOUT STROKE
+# ═══════════════════════════
+with tab2:
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("""
+        <div class='stroke-info'>
+            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🧠 What is a Stroke?</div>
+            <div style='font-size:14px; color:#444; line-height:1.8;'>
+                A stroke occurs when blood flow to part of the brain is blocked or a blood vessel bursts.
+                Brain cells begin to die within minutes without oxygen. It is a medical emergency
+                requiring immediate attention.
+            </div>
+        </div>
+
+        <div class='stroke-info'>
+            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>⚡ Warning Signs (FAST)</div>
+            <div style='font-size:14px; color:#444; line-height:2;'>
+                <b style='color:#e05c1a;'>F</b> — Face drooping on one side<br>
+                <b style='color:#e05c1a;'>A</b> — Arm weakness or numbness<br>
+                <b style='color:#e05c1a;'>S</b> — Speech difficulty or slurred<br>
+                <b style='color:#e05c1a;'>T</b> — Time to call emergency services
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div class='stroke-info'>
+            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>📊 Global Statistics</div>
+            <div style='font-size:14px; color:#444; line-height:2;'>
+                🌍 13 million strokes occur globally each year<br>
+                💔 5.5 million deaths annually from stroke<br>
+                ♿ Leading cause of long-term disability<br>
+                ⏰ Every 40 seconds someone has a stroke in the US<br>
+                🎯 80% of strokes are preventable
+            </div>
+        </div>
+
+        <div class='stroke-info'>
+            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🔬 Types of Stroke</div>
+            <div style='font-size:14px; color:#444; line-height:2;'>
+                <b>Ischemic (87%)</b> — Blood clot blocks artery<br>
+                <b>Hemorrhagic (13%)</b> — Blood vessel ruptures<br>
+                <b>TIA</b> — Temporary blockage (mini-stroke)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class='stroke-info'>
+        <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🤖 About This Model</div>
+        <div style='font-size:14px; color:#444; line-height:1.8;'>
+            This system uses <b>Logistic Regression</b> — a well-established machine learning algorithm
+            chosen for its high interpretability in healthcare settings. The model was trained on
+            5,110 real patient records from Kaggle, with SMOTE applied to handle class imbalance.
+            Preprocessing included BMI imputation, one-hot encoding, and StandardScaler normalization.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ═══════════════════════════
+# TAB 3 — RISK FACTORS
+# ═══════════════════════════
+with tab3:
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("""
+        <div style='font-size:16px; font-weight:700; color:#e05c1a; margin-bottom:14px;'>⚠️ High Risk Factors</div>
+        """, unsafe_allow_html=True)
+
+        factors_high = [
+            ("Hypertension", "High blood pressure damages arteries increasing stroke risk significantly."),
+            ("High Glucose Level", "Blood sugar above 140 mg/dL increases stroke risk — diabetes is a major factor."),
+            ("Old Age (60+)", "Risk doubles every 10 years after age 55."),
+            ("Heart Disease", "Irregular heartbeat and other heart conditions increase clot formation."),
+            ("Smoking", "Smoking doubles stroke risk by damaging blood vessels and increasing clot formation."),
+            ("High BMI", "Obesity (BMI > 30) leads to hypertension and diabetes — both stroke risk factors."),
+        ]
+
+        for title, desc in factors_high:
+            st.markdown(f"""
+            <div class='risk-card risk-high'>
+                <span class='risk-tag tag-high'>HIGH RISK</span>
+                <div style='font-size:14px; font-weight:600; color:#1a1a1a;'>{title}</div>
+                <div style='font-size:13px; color:#666; margin-top:4px;'>{desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("""
+        <div style='font-size:16px; font-weight:700; color:#16a34a; margin-bottom:14px;'>✅ Protective Factors</div>
+        """, unsafe_allow_html=True)
+
+        factors_low = [
+            ("Normal Blood Pressure", "Keeping BP below 120/80 mmHg significantly reduces stroke risk."),
+            ("Healthy Glucose Level", "Maintaining blood sugar below 100 mg/dL protects brain vessels."),
+            ("Young Age", "People under 40 have significantly lower stroke risk."),
+            ("Never Smoked", "Non-smokers have half the stroke risk of smokers."),
+            ("Healthy BMI (18.5-24.9)", "Maintaining healthy weight reduces hypertension and diabetes risk."),
+            ("Active Lifestyle", "Regular exercise reduces stroke risk by up to 27%."),
+        ]
+
+        for title, desc in factors_low:
+            st.markdown(f"""
+            <div class='risk-card risk-low'>
+                <span class='risk-tag tag-low'>PROTECTIVE</span>
+                <div style='font-size:14px; font-weight:600; color:#1a1a1a;'>{title}</div>
+                <div style='font-size:13px; color:#666; margin-top:4px;'>{desc}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ==========================================
 # TAB 1: DATASET OVERVIEW
@@ -926,120 +1040,7 @@ if submitted:
         "bands, not clinically validated risk levels. "
         "This educational model is not a medical diagnosis."
     )
-# ═══════════════════════════
-# TAB 2 — ABOUT STROKE
-# ═══════════════════════════
-with tab2:
-    col1, col2 = st.columns(2)
 
-    with col1:
-        st.markdown("""
-        <div class='stroke-info'>
-            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🧠 What is a Stroke?</div>
-            <div style='font-size:14px; color:#444; line-height:1.8;'>
-                A stroke occurs when blood flow to part of the brain is blocked or a blood vessel bursts.
-                Brain cells begin to die within minutes without oxygen. It is a medical emergency
-                requiring immediate attention.
-            </div>
-        </div>
-
-        <div class='stroke-info'>
-            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>⚡ Warning Signs (FAST)</div>
-            <div style='font-size:14px; color:#444; line-height:2;'>
-                <b style='color:#e05c1a;'>F</b> — Face drooping on one side<br>
-                <b style='color:#e05c1a;'>A</b> — Arm weakness or numbness<br>
-                <b style='color:#e05c1a;'>S</b> — Speech difficulty or slurred<br>
-                <b style='color:#e05c1a;'>T</b> — Time to call emergency services
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("""
-        <div class='stroke-info'>
-            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>📊 Global Statistics</div>
-            <div style='font-size:14px; color:#444; line-height:2;'>
-                🌍 13 million strokes occur globally each year<br>
-                💔 5.5 million deaths annually from stroke<br>
-                ♿ Leading cause of long-term disability<br>
-                ⏰ Every 40 seconds someone has a stroke in the US<br>
-                🎯 80% of strokes are preventable
-            </div>
-        </div>
-
-        <div class='stroke-info'>
-            <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🔬 Types of Stroke</div>
-            <div style='font-size:14px; color:#444; line-height:2;'>
-                <b>Ischemic (87%)</b> — Blood clot blocks artery<br>
-                <b>Hemorrhagic (13%)</b> — Blood vessel ruptures<br>
-                <b>TIA</b> — Temporary blockage (mini-stroke)
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown("""
-    <div class='stroke-info'>
-        <div style='font-size:18px; font-weight:700; color:#e05c1a; margin-bottom:12px;'>🤖 About This Model</div>
-        <div style='font-size:14px; color:#444; line-height:1.8;'>
-            This system uses <b>Logistic Regression</b> — a well-established machine learning algorithm
-            chosen for its high interpretability in healthcare settings. The model was trained on
-            5,110 real patient records from Kaggle, with SMOTE applied to handle class imbalance.
-            Preprocessing included BMI imputation, one-hot encoding, and StandardScaler normalization.
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-# ═══════════════════════════
-# TAB 3 — RISK FACTORS
-# ═══════════════════════════
-with tab3:
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown("""
-        <div style='font-size:16px; font-weight:700; color:#e05c1a; margin-bottom:14px;'>⚠️ High Risk Factors</div>
-        """, unsafe_allow_html=True)
-
-        factors_high = [
-            ("Hypertension", "High blood pressure damages arteries increasing stroke risk significantly."),
-            ("High Glucose Level", "Blood sugar above 140 mg/dL increases stroke risk — diabetes is a major factor."),
-            ("Old Age (60+)", "Risk doubles every 10 years after age 55."),
-            ("Heart Disease", "Irregular heartbeat and other heart conditions increase clot formation."),
-            ("Smoking", "Smoking doubles stroke risk by damaging blood vessels and increasing clot formation."),
-            ("High BMI", "Obesity (BMI > 30) leads to hypertension and diabetes — both stroke risk factors."),
-        ]
-
-        for title, desc in factors_high:
-            st.markdown(f"""
-            <div class='risk-card risk-high'>
-                <span class='risk-tag tag-high'>HIGH RISK</span>
-                <div style='font-size:14px; font-weight:600; color:#1a1a1a;'>{title}</div>
-                <div style='font-size:13px; color:#666; margin-top:4px;'>{desc}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("""
-        <div style='font-size:16px; font-weight:700; color:#16a34a; margin-bottom:14px;'>✅ Protective Factors</div>
-        """, unsafe_allow_html=True)
-
-        factors_low = [
-            ("Normal Blood Pressure", "Keeping BP below 120/80 mmHg significantly reduces stroke risk."),
-            ("Healthy Glucose Level", "Maintaining blood sugar below 100 mg/dL protects brain vessels."),
-            ("Young Age", "People under 40 have significantly lower stroke risk."),
-            ("Never Smoked", "Non-smokers have half the stroke risk of smokers."),
-            ("Healthy BMI (18.5-24.9)", "Maintaining healthy weight reduces hypertension and diabetes risk."),
-            ("Active Lifestyle", "Regular exercise reduces stroke risk by up to 27%."),
-        ]
-
-        for title, desc in factors_low:
-            st.markdown(f"""
-            <div class='risk-card risk-low'>
-                <span class='risk-tag tag-low'>PROTECTIVE</span>
-                <div style='font-size:14px; font-weight:600; color:#1a1a1a;'>{title}</div>
-                <div style='font-size:13px; color:#666; margin-top:4px;'>{desc}</div>
-            </div>
-            """, unsafe_allow_html=True)
 
 # ==========================================
 # FOOTER
