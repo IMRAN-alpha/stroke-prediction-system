@@ -458,7 +458,7 @@ tab1, tab2, tab3, tab4, tab5,tab6 = st.tabs([
     "📊 Dataset Overview",
     "🎯 Target Analysis",
     "❤️ Health & Lifestyle",
-    "🤖 Model Results",
+    "💯 Model Results",
     "ℹ️ about stroke",
     "⚠️ Risk factor"
 ])
@@ -995,17 +995,17 @@ if submitted:
     if probability_percent < 30:
         risk_label = "LOWER PREDICTED PROBABILITY"
         risk_color = "#22c55e"
-        risk_icon = "🟢"
+        risk_icon = "💚💚💚"
 
     elif probability_percent < 60:
         risk_label = "MODERATE PREDICTED PROBABILITY"
         risk_color = "#eab308"
-        risk_icon = "🟡"
+        risk_icon = "💛💛"
 
     else:
         risk_label = "HIGHER PREDICTED PROBABILITY"
         risk_color = "#ef4444"
-        risk_icon = "🔴"
+        risk_icon = "💔"
 
     st.markdown("### ◈ PREDICTION OUTPUT")
 
